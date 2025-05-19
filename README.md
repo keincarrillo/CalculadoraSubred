@@ -5,16 +5,10 @@
 ![pull-requests](https://img.shields.io/github/issues-pr/keincarrillo/CalculadoraSubred)
 ![last-commit](https://img.shields.io/github/last-commit/keincarrillo/CalculadoraSubred)
 ![Vite](https://img.shields.io/badge/Vite-4.0+-purple?logo=vite)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.0+-blue?logo=tailwindcss)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.1+-blue?logo=tailwindcss)
 ![TypeScript](https://img.shields.io/badge/TypeScript-4.0+-3178c6?logo=typescript)
 
 Una aplicación web desarrollada con **React**, **TypeScript**, **Vite** y **TailwindCSS** para calcular subredes de forma rápida, visual y educativa. Perfecta para estudiantes y profesores.
-
----
-
-## 🖥️ Demo
-
-> Próximamente: [Ver demo en línea](https://github.com/keincarrillo/CalculadoraSubred)
 
 ---
 
@@ -42,15 +36,17 @@ pnpm install
 pnpm run dev
 ```
 
-🏗️ Estructura del proyecto
+## 🏗️ Estructura del proyecto
 
+```plaintext
 src/
-├── assets/ # Imágenes, íconos, SVGs
-├── components/ # Componentes reutilizables
-├── pages/ # Vistas principales de la app
-├── types/ # Tipos personalizados TypeScript
-├── utils/ # Funciones auxiliares
-├── App.tsx # Componente raíz
-├── main.tsx # Punto de entrada de React
-├── index.css # Estilos base con Tailwind
-├── vite-env.d.ts # Tipos de entorno de Vite
+├── assets/         # Imágenes, íconos, SVGs
+├── components/     # Componentes reutilizables
+├── pages/          # Vistas principales de la app
+├── types/          # Tipos personalizados TypeScript
+├── utils/          # Funciones auxiliares
+├── App.tsx         # Componente raíz
+├── main.tsx        # Punto de entrada de React
+├── index.css       # Estilos base con Tailwind
+├── vite-env.d.ts   # Tipos de entorno de Vite
+```
