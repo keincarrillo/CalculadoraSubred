@@ -45,7 +45,6 @@ src/
 ├── pages/          # Vistas principales de la app
 ├── types/          # Tipos personalizados TypeScript
 ├── utils/          # Funciones auxiliares
-├── App.tsx         # Componente raíz
 ├── main.tsx        # Punto de entrada de React
 ├── index.css       # Estilos base con Tailwind
 ├── vite-env.d.ts   # Tipos de entorno de Vite
