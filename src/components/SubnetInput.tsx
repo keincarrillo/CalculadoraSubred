@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { isSubnetInvalid, shouldDisableSubmit } from "@/utils/subnetUtils";
 
 const SubnetInput = () => {
   const [ip, setIp] = useState<string>("");
@@ -11,27 +12,19 @@ const SubnetInput = () => {
     console.log({ ip, maskMac, maskNewMac, onlyFirstLast });
   };
 
-  // Validaciones
-  const numericMask = Number(maskMac);
-  const numericNewMask = Number(maskNewMac);
-
-  const isSubnetInvalid: boolean =
-    !isNaN(numericMask) &&
-    !isNaN(numericNewMask) &&
-    numericNewMask < numericMask;
-
-  const isDisabled: boolean =
-    ip.trim() === "" ||
-    maskMac.trim() === "" ||
-    maskNewMac.trim() === "" ||
-    isSubnetInvalid;
+  const subnetInvalid = isSubnetInvalid(maskMac, maskNewMac);
+  const isDisabled = shouldDisableSubmit(
+    ip,
+    maskMac,
+    maskNewMac,
+    subnetInvalid
+  );
 
   return (
     <form
       onSubmit={handleSubmit}
       className="flex flex-col items-center gap-6 text-black mt-10"
     >
-      {/* Línea de inputs horizontal */}
       <div className="flex items-center gap-3 flex-wrap justify-center">
         <div className="flex flex-col items-start">
           <label className="text-xs font-bold uppercase">Dirección IP:</label>
@@ -80,14 +73,12 @@ const SubnetInput = () => {
         </div>
       </div>
 
-      {/* Mensaje de error */}
-      {isSubnetInvalid && (
+      {subnetInvalid && (
         <p className="text-red-600 font-medium text-sm">
           La nueva máscara no puede ser menor que la original.
         </p>
       )}
 
-      {/* Checkbox */}
       <div className="flex items-center gap-2">
         <input
           type="checkbox"
@@ -99,7 +90,6 @@ const SubnetInput = () => {
         </label>
       </div>
 
-      {/* Botón */}
       <button
         type="submit"
         disabled={isDisabled}
