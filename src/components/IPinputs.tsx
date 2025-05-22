@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { shouldDisableSubmit, isSubnetInvalid } from "@/utils/subnetUtils";
+import {
+  shouldDisableSubmit,
+  isSubnetInvalid,
+  isValidIPv4,
+} from "@/utils/subnetUtils";
 import { subnetCalc } from "@/utils/subnetCalc";
 
 const MASK_OPTIONS = ["8", "16", "24"];
@@ -25,11 +29,20 @@ const IPinputs = () => {
     formValues.maskMac,
     formValues.maskNewMac
   );
+
+  const maskNewMacValue = Number(formValues.maskNewMac);
+  const isMaskNewMacInvalid =
+    formValues.maskNewMac !== "" &&
+    (isNaN(maskNewMacValue) || maskNewMacValue > 32 || maskNewMacValue < 0);
+
+  const ipInvalid = formValues.ip !== "" && !isValidIPv4(formValues.ip);
+
   const isDisabled = shouldDisableSubmit(
     formValues.ip,
     formValues.maskMac,
     formValues.maskNewMac,
-    subnetInvalid
+    subnetInvalid,
+    ipInvalid
   );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -39,7 +52,7 @@ const IPinputs = () => {
 
   return (
     <form
-      className="flex flex-col items-center gap-6 text-black mt-10"
+      className="flex flex-col items-center gap-4 text-black mt-10"
       onSubmit={handleSubmit}
     >
       <div className="flex items-center gap-3 flex-wrap justify-center">
@@ -93,7 +106,7 @@ const IPinputs = () => {
           <input
             id="maskNewMac"
             name="maskNewMac"
-            type="text"
+            type="number"
             placeholder="Bits nueva MAC"
             className="border px-2 py-1 rounded w-36"
             value={formValues.maskNewMac}
@@ -105,6 +118,18 @@ const IPinputs = () => {
       {subnetInvalid && (
         <p className="text-red-600 font-medium text-sm">
           La nueva máscara no puede ser menor que la original.
+        </p>
+      )}
+
+      {ipInvalid && (
+        <p className="text-red-600 font-medium text-sm">
+          Dirección IP inválida.
+        </p>
+      )}
+
+      {isMaskNewMacInvalid && (
+        <p className="text-red-600 font-medium text-sm">
+          La máscara de subnet debe ser un número entre 0 y 32.
         </p>
       )}
 
