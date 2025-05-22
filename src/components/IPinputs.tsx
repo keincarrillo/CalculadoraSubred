@@ -1,18 +1,40 @@
 import { useState } from "react";
 import { shouldDisableSubmit, isSubnetInvalid } from "@/utils/subnetUtils";
+import { subnetCalc } from "@/utils/subnetCalc";
+
+const MASK_OPTIONS = ["8", "16", "24"];
 
 const IPinputs = () => {
-  // Hooks
-  const [ip, setIp] = useState<string>("");
-  const [maskMac, setMaskMac] = useState<string>("");
-  const [maskNewMac, setMaskNewMac] = useState<string>("");
+  // Estado unico para agrupar los valores
+  const [formValues, setFormValues] = useState({
+    ip: "",
+    maskMac: "",
+    maskNewMac: "",
+  });
 
-  const isDisabled = shouldDisableSubmit(ip, maskMac, maskNewMac, false);
-  const subnetInvalid = isSubnetInvalid(maskMac, maskNewMac);
+  // Manejador generico para inputs y selects
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormValues((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Validaciones
+  const subnetInvalid = isSubnetInvalid(
+    formValues.maskMac,
+    formValues.maskNewMac
+  );
+  const isDisabled = shouldDisableSubmit(
+    formValues.ip,
+    formValues.maskMac,
+    formValues.maskNewMac,
+    subnetInvalid
+  );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({ ip, maskMac, maskNewMac });
+    subnetCalc(formValues.ip, formValues.maskMac, formValues.maskNewMac);
   };
 
   return (
@@ -22,12 +44,17 @@ const IPinputs = () => {
     >
       <div className="flex items-center gap-3 flex-wrap justify-center">
         <div className="flex flex-col items-start">
-          <label className="text-xs font-bold uppercase">Dirección IP:</label>
+          <label className="text-xs font-bold uppercase" htmlFor="ip">
+            Dirección IP:
+          </label>
           <input
+            id="ip"
+            name="ip"
             type="text"
             placeholder="Host o Network"
             className="border px-2 py-1 rounded w-36"
-            onChange={(e) => setIp(e.target.value)}
+            value={formValues.ip}
+            onChange={handleInputChange}
           />
         </div>
 
@@ -36,15 +63,22 @@ const IPinputs = () => {
         </div>
 
         <div className="flex flex-col items-start">
-          <label className="text-xs font-bold uppercase">Máscara de red:</label>
+          <label className="text-xs font-bold uppercase" htmlFor="maskMac">
+            Máscara de red:
+          </label>
           <select
+            id="maskMac"
+            name="maskMac"
             className="border px-2 py-1 rounded w-32"
-            onChange={(e) => setMaskMac(e.target.value)}
+            value={formValues.maskMac}
+            onChange={handleInputChange}
           >
             <option value="">Selecciona</option>
-            <option value="8">8</option>
-            <option value="16">16</option>
-            <option value="24">24</option>
+            {MASK_OPTIONS.map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -53,33 +87,30 @@ const IPinputs = () => {
         </div>
 
         <div className="flex flex-col items-start">
-          <label className="text-xs font-bold uppercase">
+          <label className="text-xs font-bold uppercase" htmlFor="maskNewMac">
             Máscara de Subnet:
           </label>
           <input
+            id="maskNewMac"
+            name="maskNewMac"
             type="text"
             placeholder="Bits nueva MAC"
             className="border px-2 py-1 rounded w-36"
-            onChange={(e) => setMaskNewMac(e.target.value)}
+            value={formValues.maskNewMac}
+            onChange={handleInputChange}
           />
         </div>
       </div>
 
-      {subnetInvalid ? (
+      {subnetInvalid && (
         <p className="text-red-600 font-medium text-sm">
           La nueva máscara no puede ser menor que la original.
         </p>
-      ) : null}
-
-      <div className="flex items-center gap-2">
-        <input type="checkbox" />
-        <label className="text-sm font-medium">
-          Calcular solo las primeras y últimas redes
-        </label>
-      </div>
+      )}
 
       <button
         type="submit"
+        disabled={isDisabled}
         className={`px-6 py-2 rounded text-white font-semibold transition-colors duration-300 ${
           isDisabled
             ? "bg-gray-400 cursor-not-allowed"
