@@ -2,7 +2,8 @@ import { useState } from "react";
 import {
   shouldDisableSubmit,
   isSubnetInvalid,
-  isValidIPv4,
+  maskMacInvalid,
+  ipInvalid,
 } from "@/utils/subnetUtils";
 import { subnetCalc } from "@/utils/subnetCalc";
 
@@ -30,19 +31,16 @@ const IPinputs = () => {
     formValues.maskNewMac
   );
 
-  const maskNewMacValue = Number(formValues.maskNewMac);
-  const isMaskNewMacInvalid =
-    formValues.maskNewMac !== "" &&
-    (isNaN(maskNewMacValue) || maskNewMacValue > 32 || maskNewMacValue < 0);
+  const isMaskNewMacInvalid = maskMacInvalid(Number(formValues.maskNewMac));
 
-  const ipInvalid = formValues.ip !== "" && !isValidIPv4(formValues.ip);
+  const isIpInvalid = ipInvalid(formValues.ip);
 
   const isDisabled = shouldDisableSubmit(
     formValues.ip,
     formValues.maskMac,
     formValues.maskNewMac,
     subnetInvalid,
-    ipInvalid
+    isIpInvalid
   );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -121,7 +119,7 @@ const IPinputs = () => {
         </p>
       )}
 
-      {ipInvalid && (
+      {isIpInvalid && (
         <p className="text-red-600 font-medium text-sm">
           Dirección IP inválida.
         </p>
